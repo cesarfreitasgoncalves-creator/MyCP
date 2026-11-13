@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler } from "agents/mcp/server";
+import { registerInternalPrompts } from "./commands";
 import { MemoryManager, registerMemoryManagerTool } from "./memory-manager";
 
 export { MemoryManager };
@@ -11,6 +12,7 @@ function createServer(env: Env) {
 	});
 
 	registerMemoryManagerTool(server, env.MEMORY_MANAGER);
+	registerInternalPrompts(server, env.MEMORY_MANAGER);
 	return server;
 }
 

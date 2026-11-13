@@ -9,6 +9,8 @@ type MemoryRecord = {
 	priority: number;
 };
 
+export type StoredMemory = MemoryRecord;
+
 export type MemoryManagerResult =
 	| { status: "added"; priority: number }
 	| { status: "priority-updated"; oldPriority: number; priority: number }
@@ -17,6 +19,17 @@ export type MemoryManagerResult =
 	| { status: "not-found" };
 
 export class MemoryManager extends DurableObject<Env> {
+	async list(): Promise<StoredMemory[]> {
+		const records = await this.ctx.storage.list<MemoryRecord>({
+			prefix: "memory:",
+		});
+
+		return Array.from(records.values()).sort(
+			(left, right) =>
+				right.priority - left.priority || left.mem.localeCompare(right.mem),
+		);
+	}
+
 	async manage(
 		action: MemoryAction,
 		priority: number,
